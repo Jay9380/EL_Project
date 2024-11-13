@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Web Starter (REST API를 위한 의존성)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Data Elasticsearch (Elasticsearch와의 통신을 위한 의존성)
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+    // Spring Boot DevTools (개발 중 리로딩을 위한 의존성)
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Elasticsearch High Level REST Client (RestHighLevelClient 사용을 위해 추가)
+    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.0' // 적절한 버전 확인 후 사용
+
+    // Lombok (선택사항 - getter, setter 등 코드 생성을 쉽게 하기 위한 라이브러리)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
