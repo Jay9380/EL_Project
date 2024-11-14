@@ -39,9 +39,14 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
+    //Criteria 클래스의 where 메서드가 정적(static) 메서드로 정의되어 있음
     public List<Post> searchByTitle(String title) {
         Criteria criteria = Criteria.where("title").matches(title);
+        //CriteriaQuery는 Criteria 외의 타입을 허용하지 않음
         CriteriaQuery query = new CriteriaQuery(criteria);
+
+        //SearchHits =>  검색 결과의 모음을 나타내는 클래스
+        //elasticsearchOperations => Spring Data Elasticsearch 인터페이스
         SearchHits<Post> searchHits = elasticsearchOperations.search(query, Post.class);
 
         List<Post> posts = new ArrayList<>();
@@ -86,6 +91,12 @@ public class PostService {
         for (var hit : searchHits) {
             posts.add(hit.getContent());
         }
+
+        /*
+            for (int i = 0; i < searchHits.getSearchHits().size(); i++) {
+                posts.add(searchHits.getSearchHits().get(i).getContent());
+            }
+         */
         return posts;
     }
 }
