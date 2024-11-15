@@ -19,31 +19,35 @@ public class PostController {
     }
 
 
-    // 전체 게시글 조회 및 검색
     @GetMapping("/view")
     public String viewPosts(Model model,
                             @RequestParam(value = "keyword", required = false) String keyword,
-                            @RequestParam(value = "searchType", required = false, defaultValue = "all") String searchType) {
+                            @RequestParam(value = "searchType", required = false, defaultValue = "all") String searchType,
+                            @RequestParam(value = "option", required = false, defaultValue = "match") String option) {
 
         if (keyword != null && !keyword.isEmpty()) {
-            switch (searchType) {
-                case "title":
-                    model.addAttribute("posts", postService.searchByTitle(keyword));
-                    break;
-                case "content":
-                    model.addAttribute("posts", postService.searchByContent(keyword));
-                    break;
-                case "author":
-                    model.addAttribute("posts", postService.searchByAuthor(keyword));
-                    break;
-                case "all":
-                    model.addAttribute("posts", postService.searchByAllFields(keyword));
-                    break;
-                default:
-                    model.addAttribute("posts", postService.findAll());
+            if ("all".equals(searchType)) {
+                // 전체 필드에서 검색
+                model.addAttribute("posts", postService.searchByAllFields(keyword, option));
+            } else {
+                // 개별 필드에서 검색
+                switch (searchType) {
+                    case "title":
+                        model.addAttribute("posts", postService.searchByTitle(keyword, option));
+                        break;
+                    case "content":
+                        model.addAttribute("posts", postService.searchByContent(keyword, option));
+                        break;
+                    case "author":
+                        model.addAttribute("posts", postService.searchByAuthor(keyword, option));
+                        break;
+                    default:
+                        model.addAttribute("posts", postService.findAll());
+                }
             }
             model.addAttribute("keyword", keyword);
             model.addAttribute("searchType", searchType);
+            model.addAttribute("option", option);
         } else {
             model.addAttribute("posts", postService.findAll());
         }
@@ -58,12 +62,11 @@ public class PostController {
         return "postForm";
     }
 
-    // 게시글 작성
     @PostMapping
     public String createPost(@ModelAttribute Post post) {
-        String customId = "1"; // 원하는 ID 값
-        post.setId(customId);
+        // 매번 새로운 UUID를 생성하여 ID로 설정
         //post.setId(UUID.randomUUID().toString()); // 또는 원하는 ID 설정
+        post.setId(UUID.randomUUID().toString());
         postService.savePost(post);
         return "redirect:/posts/view";
     }

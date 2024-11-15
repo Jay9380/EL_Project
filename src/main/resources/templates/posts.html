@@ -15,6 +15,11 @@
         <option value="content" th:selected="${searchType == 'content'}">내용</option>
         <option value="author" th:selected="${searchType == 'author'}">작성자</option>
     </select>
+    <select name="option">
+        <option value="match" th:selected="${option == 'match'}">Match</option>
+        <option value="term" th:selected="${option == 'term'}">Term</option>
+        <option value="expression" th:selected="${option == 'expression'}">Expression</option>
+    </select>
     <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
     <button type="submit">검색</button>
     <a href="/posts/view">전체 보기</a>
