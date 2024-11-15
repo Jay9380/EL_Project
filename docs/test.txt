@@ -1,0 +1,77 @@
+GET /posts/_search
+
+
+POST /posts/_doc
+{
+  "title": "세 번째 게시글",
+  "content": "이것은 세 번째 게시글의 내용입니다.",
+  "author": "작성자3"
+}
+
+
+GET /posts/_doc/1
+
+
+
+GET /posts/_search
+{
+  "query": {
+    "match": {
+      "title": "게시글"
+    }
+  }
+}
+
+
+POST /posts/_update/1
+{
+  "doc": {
+    "content": "이것은 수정된 첫 번째 게시글의 내용입니다."
+  }
+}
+
+PUT /posts/_doc/1
+{
+  "title": "첫 번째 게시글 (수정됨)",
+  "content": "이것은 수정된 게시글 내용입니다.",
+  "author": "작성자1"
+}
+
+
+GET /posts/_search
+{
+  "query": {
+    "match": {
+      "title": "게시글"
+    }
+  },
+  "_source": false,
+  "fields": ["_id"]
+}
+
+GET /posts/_search
+
+GET /posts/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": {
+        "query": "두번째",
+        "slop": 1
+      }
+    }
+  }
+}
+
+
+GET /posts/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": {
+        "query": "두번째",
+        "slop": 2
+      }
+    }
+  }
+}
