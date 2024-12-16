@@ -4,6 +4,7 @@ package com.example.el_project.service;
 import com.example.el_project.model.Post;
 import com.example.el_project.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
@@ -59,6 +60,12 @@ public class PostService {
     public List<Post> searchByAuthor(String keyword, String option) {
         Criteria criteria = buildCriteria("author", keyword, option);
         return executeSearch(criteria);
+    }
+
+    public List<Post> findAllSorted(String sortOrder) {
+        Sort sort = sortOrder.equals("latest") ? Sort.by(Sort.Direction.DESC, "createdAt") :
+                Sort.by(Sort.Direction.ASC, "createdAt");
+        return postRepository.findAll(sort);
     }
 
     private Criteria buildCriteria(String field, String keyword, String option) {

@@ -36,7 +36,6 @@ dependencies {
     // Elasticsearch High Level REST Client (RestHighLevelClient 사용을 위해 추가)
     implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.0' // 적절한 버전 확인 후 사용
 
-    // Lombok (선택사항 - getter, setter 등 코드 생성을 쉽게 하기 위한 라이브러리)
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 

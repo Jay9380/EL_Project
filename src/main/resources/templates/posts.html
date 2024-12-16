@@ -2,51 +2,187 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>게시판</title>
+    <title>공지사항</title>
+    <style>
+        /* 기존 스타일 유지 */
+        section.notice {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .page-title h3 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        /* 검색창 영역 */
+        #board-search {
+            margin: 0 auto;
+            max-width: 600px;
+            background-color: #f9f7f9;
+            padding: 15px 10px;
+        }
+
+        .search-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-wrap select {
+            height: 40px;
+            padding: 5px 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .search-wrap input {
+            flex: 1;
+            height: 40px;
+            padding: 0 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .search-wrap .btn {
+            height: 40px;
+            padding: 0 20px;
+            background-color: #555;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .search-wrap .btn:hover {
+            background-color: #373737;
+        }
+
+        /* 작성하기 버튼 스타일 */
+        .btn-create {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 10px 20px;
+            background-color: #4CAF50; /* 초록색 */
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .btn-create:hover {
+            background-color: #45a049; /* 더 진한 초록색 */
+        }
+
+        /* 테이블 스타일 */
+        .board-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .board-table th, .board-table td {
+            text-align: center;
+            padding: 12px;
+            border-top: 1px solid #ddd;
+        }
+
+        .board-table th {
+            background-color: #f9f7f9;
+            color: #333;
+        }
+
+        .board-table a {
+            color: #555;
+            text-decoration: none;
+        }
+
+        .board-table a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h1>게시판</h1>
+<section class="notice">
+    <!-- 타이틀 -->
+    <div class="page-title">
+        <h3>게시판</h3>
+    </div>
 
-<!-- 검색 폼 -->
-<form th:action="@{/posts/view}" method="get">
-    <select name="searchType">
-        <option value="all" th:selected="${searchType == 'all'}">전체</option>
-        <option value="title" th:selected="${searchType == 'title'}">제목</option>
-        <option value="content" th:selected="${searchType == 'content'}">내용</option>
-        <option value="author" th:selected="${searchType == 'author'}">작성자</option>
-    </select>
-    <select name="option">
-        <option value="match" th:selected="${option == 'match'}">Match</option>
-        <option value="term" th:selected="${option == 'term'}">Term</option>
-        <option value="expression" th:selected="${option == 'expression'}">Expression</option>
-    </select>
-    <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
-    <button type="submit">검색</button>
-    <a href="/posts/view">전체 보기</a>
-</form>
+    <!-- 검색창 영역 -->
+    <div id="board-search">
+        <form th:action="@{/posts/view}" method="get">
+            <div class="search-wrap">
+                <select name="searchType">
+                    <option value="all" th:selected="${searchType == 'all'}">전체</option>
+                    <option value="title" th:selected="${searchType == 'title'}">제목</option>
+                    <option value="content" th:selected="${searchType == 'content'}">내용</option>
+                    <option value="author" th:selected="${searchType == 'author'}">작성자</option>
+                </select>
+                <select name="option">
+                    <option value="match" th:selected="${option == 'match'}">Match</option>
+                    <option value="term" th:selected="${option == 'term'}">Term</option>
+                    <option value="expression" th:selected="${option == 'expression'}">Expression</option>
+                </select>
 
-<a href="/posts/new">새 게시글 작성</a>
+                <input type="text" name="keyword" placeholder="검색어를 입력해주세요." th:value="${keyword}">
+                <!-- 정렬 옵션 -->
+                <select name="sortOrder">
+                    <option value="latest" th:selected="${sortOrder == 'latest'}">최신순</option>
+                    <option value="oldest" th:selected="${sortOrder == 'oldest'}">오래된 순</option>
+                </select>
+                <button type="submit" class="btn">검색</button>
+            </div>
+        </form>
+    </div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>제목</th>
-        <th>내용</th>
-        <th>작성자</th>
-        <th>액션</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="post : ${posts}">
-        <td th:text="${post.title}">제목</td>
-        <td th:text="${post.content}">내용</td>
-        <td th:text="${post.author}">작성자</td>
-        <td>
-            <a th:href="@{'/posts/edit/' + ${post.id}}">수정</a>
-            <a th:href="@{'/posts/delete/' + ${post.id}}">삭제</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <!-- 작성하기 버튼 -->
+    <div class="container" style="text-align: right;">
+        <a href="/posts/new" class="btn-create">새 게시글 작성</a>
+    </div>
+
+    <!-- 게시글 테이블 -->
+    <div id="board-list">
+        <table class="board-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>등록일</th>
+                <th>액션</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post, stat : ${posts}">
+                <td th:text="${stat.count}">1</td>
+                <td><a th:href="@{'/posts/edit/' + ${post.id}}" th:text="${post.title}">제목</a></td>
+                <td th:text="${post.author}">작성자</td>
+                <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">등록일</td>
+                <td>
+                    <a th:href="@{'/posts/edit/' + ${post.id}}" class="btn">수정</a>
+                    <a th:href="@{'/posts/delete/' + ${post.id}}" class="btn">삭제</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
 </body>
 </html>

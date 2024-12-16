@@ -3,15 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 작성/수정</title>
+    <style>
+        /* 전체 페이지 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 28px;
+            color: #333;
+        }
+
+        /* 폼 스타일 */
+        .form-container {
+            width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 120px;
+        }
+
+        /* 버튼 스타일 */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #333;
+            text-decoration: underline;
+        }
+
+        /* 링크 버튼 스타일 */
+        .btn-back {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 <h1>게시글 작성/수정</h1>
-<form th:action="@{${post.id} == null ? '/posts' : '/posts/update/' + ${post.id}}" th:object="${post}" method="post">
-    <label>제목: <input type="text" th:field="*{title}" /></label><br />
-    <label>내용: <textarea th:field="*{content}"></textarea></label><br />
-    <label>작성자: <input type="text" th:field="*{author}" /></label><br />
-    <button type="submit">저장</button>
-</form>
-<a href="/posts/view">목록으로 돌아가기</a>
+<div class="form-container">
+    <form th:action="@{${post.id} == null ? '/posts' : '/posts/update/' + ${post.id}}" th:object="${post}" method="post">
+        <label for="title">제목</label>
+        <input type="text" id="title" th:field="*{title}" placeholder="제목을 입력하세요" />
+
+        <label for="content">내용</label>
+        <textarea id="content" th:field="*{content}" placeholder="내용을 입력하세요"></textarea>
+
+        <label for="author">작성자</label>
+        <input type="text" id="author" th:field="*{author}" placeholder="작성자를 입력하세요" />
+
+        <button type="submit">저장</button>
+    </form>
+    <div class="btn-back">
+        <a href="/posts/view">목록으로 돌아가기</a>
+    </div>
+</div>
 </body>
 </html>

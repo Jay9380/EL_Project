@@ -4,8 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import java.time.LocalDateTime;
 
 
 @Document(indexName = "posts")
@@ -22,5 +28,10 @@ public class Post {
     private String content;
     private String author;
 
+    @Field(type = FieldType.Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt; // 등록 시간
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt; // 수정 시간
     // Getters, Setters
 }

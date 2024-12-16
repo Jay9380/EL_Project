@@ -1,6 +1,7 @@
 package com.example.el_project.repository;
 
 import com.example.el_project.model.Post;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public interface PostRepository extends ElasticsearchRepository<Post, String> {
     List<Post> findByContentContaining(String content);
     List<Post> findByAuthorContaining(String author);
     List<Post> findByTitleContainingOrContentContainingOrAuthorContaining(String title, String content, String author);
+    List<Post> findAll(Sort sort); // 정렬된 리스트 반환
 }
 
 /*

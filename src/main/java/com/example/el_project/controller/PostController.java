@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Controller
@@ -23,14 +24,12 @@ public class PostController {
     public String viewPosts(Model model,
                             @RequestParam(value = "keyword", required = false) String keyword,
                             @RequestParam(value = "searchType", required = false, defaultValue = "all") String searchType,
-                            @RequestParam(value = "option", required = false, defaultValue = "match") String option) {
-
+                            @RequestParam(value = "option", required = false, defaultValue = "match") String option,
+                            @RequestParam(value = "sortOrder", required = false, defaultValue = "latest") String sortOrder) {
         if (keyword != null && !keyword.isEmpty()) {
             if ("all".equals(searchType)) {
-                // 전체 필드에서 검색
                 model.addAttribute("posts", postService.searchByAllFields(keyword, option));
             } else {
-                // 개별 필드에서 검색
                 switch (searchType) {
                     case "title":
                         model.addAttribute("posts", postService.searchByTitle(keyword, option));
@@ -42,16 +41,17 @@ public class PostController {
                         model.addAttribute("posts", postService.searchByAuthor(keyword, option));
                         break;
                     default:
-                        model.addAttribute("posts", postService.findAll());
+                        model.addAttribute("posts", postService.findAllSorted(sortOrder));
                 }
             }
             model.addAttribute("keyword", keyword);
             model.addAttribute("searchType", searchType);
             model.addAttribute("option", option);
         } else {
-            model.addAttribute("posts", postService.findAll());
+            // 정렬된 전체 리스트 가져오기
+            model.addAttribute("posts", postService.findAllSorted(sortOrder));
         }
-
+        model.addAttribute("sortOrder", sortOrder);
         return "posts";
     }
 
@@ -67,6 +67,9 @@ public class PostController {
         // 매번 새로운 UUID를 생성하여 ID로 설정
         //post.setId(UUID.randomUUID().toString()); // 또는 원하는 ID 설정
         post.setId(UUID.randomUUID().toString());
+        if (post.getCreatedAt() == null) {
+            post.setCreatedAt(LocalDateTime.now());
+        }
         postService.savePost(post);
         return "redirect:/posts/view";
     }
