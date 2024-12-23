@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -25,33 +26,43 @@ public class PostController {
                             @RequestParam(value = "keyword", required = false) String keyword,
                             @RequestParam(value = "searchType", required = false, defaultValue = "all") String searchType,
                             @RequestParam(value = "option", required = false, defaultValue = "match") String option,
-                            @RequestParam(value = "sortOrder", required = false, defaultValue = "latest") String sortOrder) {
+                            @RequestParam(value = "sortOrder", required = false, defaultValue = "latest") String sortOrder,
+                            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        List<Post> posts;
+
+        // 검색 처리
         if (keyword != null && !keyword.isEmpty()) {
             if ("all".equals(searchType)) {
-                model.addAttribute("posts", postService.searchByAllFields(keyword, option));
+                posts = postService.searchByAllFields(keyword, option);
             } else {
                 switch (searchType) {
                     case "title":
-                        model.addAttribute("posts", postService.searchByTitle(keyword, option));
+                        posts = postService.searchByTitle(keyword, option);
                         break;
                     case "content":
-                        model.addAttribute("posts", postService.searchByContent(keyword, option));
+                        posts = postService.searchByContent(keyword, option);
                         break;
                     case "author":
-                        model.addAttribute("posts", postService.searchByAuthor(keyword, option));
+                        posts = postService.searchByAuthor(keyword, option);
                         break;
                     default:
-                        model.addAttribute("posts", postService.findAllSorted(sortOrder));
+                        posts = postService.findAllSorted(sortOrder);
                 }
             }
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("searchType", searchType);
-            model.addAttribute("option", option);
         } else {
-            // 정렬된 전체 리스트 가져오기
-            model.addAttribute("posts", postService.findAllSorted(sortOrder));
+            // 페이징 처리와 정렬된 전체 리스트 가져오기
+            posts = postService.findAllSortedWithPagination(sortOrder, page, pageSize);
         }
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("option", option);
         model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("page", page);
+        model.addAttribute("pageSize", pageSize);
+
         return "posts";
     }
 

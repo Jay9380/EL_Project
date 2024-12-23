@@ -34,4 +34,7 @@ public class Post {
     @LastModifiedDate
     private LocalDateTime updatedAt; // 수정 시간
     // Getters, Setters
+
+    @Field(type = FieldType.Integer, name = "viewCount")
+    private int views = 0; // 조회수 기본값 0
 }

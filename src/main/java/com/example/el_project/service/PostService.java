@@ -4,6 +4,8 @@ package com.example.el_project.service;
 import com.example.el_project.model.Post;
 import com.example.el_project.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -63,8 +65,20 @@ public class PostService {
     }
 
     public List<Post> findAllSorted(String sortOrder) {
-        Sort sort = sortOrder.equals("latest") ? Sort.by(Sort.Direction.DESC, "createdAt") :
-                Sort.by(Sort.Direction.ASC, "createdAt");
+        Sort sort;
+        switch (sortOrder) {
+            case "latest": // 최신순
+                sort = Sort.by(Sort.Direction.DESC, "createdAt");
+                break;
+            case "oldest": // 오래된 순
+                sort = Sort.by(Sort.Direction.ASC, "createdAt");
+                break;
+            case "views": // 조회수 높은 순
+                sort = Sort.by(Sort.Direction.DESC, "views");
+                break;
+            default: // 기본값: 최신순
+                sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        }
         return postRepository.findAll(sort);
     }
 
@@ -90,6 +104,26 @@ public class PostService {
             posts.add(hit.getContent());
         }
         return posts;
+    }
+
+    public List<Post> findAllSortedWithPagination(String sortOrder, int page, int pageSize) {
+        Sort sort;
+        switch (sortOrder) {
+            case "latest": // 최신순
+                sort = Sort.by(Sort.Direction.DESC, "createdAt");
+                break;
+            case "oldest": // 오래된 순
+                sort = Sort.by(Sort.Direction.ASC, "createdAt");
+                break;
+            case "views": // 조회수 높은 순
+                sort = Sort.by(Sort.Direction.DESC, "views");
+                break;
+            default: // 기본값: 최신순
+                sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        }
+
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        return postRepository.findAll(pageable).getContent();
     }
     /*
         Criteria 클래스의 where 메서드가 정적(static) 메서드로 정의되어 있음

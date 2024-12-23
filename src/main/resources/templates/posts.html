@@ -146,6 +146,13 @@
                 <select name="sortOrder">
                     <option value="latest" th:selected="${sortOrder == 'latest'}">최신순</option>
                     <option value="oldest" th:selected="${sortOrder == 'oldest'}">오래된 순</option>
+                    <option value="views" th:selected="${sortOrder == 'views'}">조회수순</option>
+                </select>
+                <!-- 페이지 크기 옵션 -->
+                <select name="pageSize">
+                    <option value="10" th:selected="${pageSize == 10}">10개</option>
+                    <option value="30" th:selected="${pageSize == 30}">30개</option>
+                    <option value="50" th:selected="${pageSize == 50}">50개</option>
                 </select>
                 <button type="submit" class="btn">검색</button>
             </div>
@@ -166,6 +173,7 @@
                 <th>제목</th>
                 <th>작성자</th>
                 <th>등록일</th>
+                <th>조회수</th>
                 <th>액션</th>
             </tr>
             </thead>
@@ -175,6 +183,7 @@
                 <td><a th:href="@{'/posts/edit/' + ${post.id}}" th:text="${post.title}">제목</a></td>
                 <td th:text="${post.author}">작성자</td>
                 <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">등록일</td>
+                <td th:text="${post.views}">조회수</td>
                 <td>
                     <a th:href="@{'/posts/edit/' + ${post.id}}" class="btn">수정</a>
                     <a th:href="@{'/posts/delete/' + ${post.id}}" class="btn">삭제</a>
@@ -182,6 +191,13 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- 페이지 네비게이션 -->
+    <div class="pagination" style="text-align: center; margin-top: 20px;">
+        <a th:if="${page > 0}" th:href="@{/posts/view(page=${page - 1}, pageSize=${pageSize}, sortOrder=${sortOrder})}">이전</a>
+        <span th:text="'현재 페이지: ' + ${page + 1}"></span>
+        <a th:if="${posts.size() == pageSize}" th:href="@{/posts/view(page=${page + 1}, pageSize=${pageSize}, sortOrder=${sortOrder})}">다음</a>
     </div>
 </section>
 </body>
